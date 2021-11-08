@@ -14,9 +14,26 @@
 
 // ------------------- drive deviation course ----------------------------------------
 void driveDeviationAutoTest(int speed, int distance) {
-  
+
 }
 
+// ------------------- Motor Slew Rate Control ---------------------------------------
+// Ramp slowely the speed of the drive wheels up to move robot none jerking forward
+
+float skewDrive(float maxSpeed, int slice, float prevSpeed) {
+  float speed;      // speed to output and set motors at
+  float speedDelta = maxSpeed / slice;      // What is out increase slice speed
+
+  if (prevSpeed < maxSpeed) {
+    // if we have not settle at the max drive space calcualte the new slice
+    speed = prevSpeed + speedDelta;
+  } else {
+    // if prevSpeed >= maxSpeed then speed is maxSpeed
+    speed = maxSpeed;
+  }
+  if(DEBUG) { std::cout << "speedDelta: " << speedDelta << " prev Speed: " << prevSpeed << " speed: " << speed << "\n";}
+  return(speed);
+}
 // ------------------- drive for distance --------------------------------------------
 // Below is a generic drive for distance function, which can be called anywhere
 // as long as drivebase.hpp is included.  Any new function you define here MUST be
@@ -121,5 +138,3 @@ void pivotTurn(float angle, int speed){
     std::cout << "Encoder Left: " << left_wheel.get_position() << " Right: " << right_wheel.get_position() << "\n";
   }
 }
-
-

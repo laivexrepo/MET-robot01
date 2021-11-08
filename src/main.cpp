@@ -31,8 +31,8 @@ void initialize() {
 
 	// gearset is set to the RED cartridge - you may need to change back to default of green
 	// by changing MOTOR_GEARSET_36 to MOTOR_GEARSET_18
-	pros::Motor left_wheel (LEFT_MOTOR_PORT, MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES);
-	pros::Motor right_wheel (RIGHT_MOTOR_PORT, MOTOR_GEARSET_36, true, pros::E_MOTOR_ENCODER_DEGREES);
+	pros::Motor left_wheel (LEFT_MOTOR_PORT, MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	pros::Motor right_wheel (RIGHT_MOTOR_PORT, MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
 }
 
 /**
@@ -124,14 +124,32 @@ void opcontrol() {
 				left_wheel.move_absolute(degreesTravel, motorMaxSpeed);
 				right_wheel.move_absolute(degreesTravel, motorMaxSpeed);
 
+				// start with speed at 0 and then ramp it slowely up
+				left_wheel.move_velocity(0);
+				right_wheel.move_velocity(0);
+
 				if(DEBUG){
 					 std::cout << "\ndriveForDistance -- distance: " << deviationLength << " speed: " << motorMaxSpeed << "\n";
 					 std::cout << "Degrees to travel: " << degreesTravel << "\n";
 					 std::cout << "minTarget: " << minTarget << " maxTarget: " << maxTarget << "\n";
 				}
 
+        int slice = 20;				// slew slicing  (max speed divided by slice is the rampup speed)
+				float speed = 0;			// current speed
+				float prevSpeed = 0;	// prevSpeed is starting at 0
+
+				// start with speed at 0 and then ramp it slowely up
+				left_wheel.move_velocity(speed);
+				right_wheel.move_velocity(speed);
+
 				while (!((fabs(left_wheel.get_position()) < (maxTarget)) && (fabs(left_wheel.get_position()) > minTarget)) && !eStop) {
-					pros::delay(2);
+					pros::delay(10);
+					speed = skewDrive(motorMaxSpeed, slice, prevSpeed);
+					prevSpeed = speed;
+
+					left_wheel.move_velocity(speed);
+					right_wheel.move_velocity(speed);
+
 					if (master.get_digital(DIGITAL_X)) {
 						eStop = true;
 						if(DEBUG) {

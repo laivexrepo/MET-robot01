@@ -24,4 +24,8 @@ void pivotTurn(float angle, int speed);            // pivot turn (turn in place)
                                                    // given speed. -deg counter
                                                    // clockwise turn.
 
+float skewDrive(float maxSpeed, int slice, float prevSpeed);  // Ramp slowely the speed of 
+                                                              // the drive wheels up to move 
+                                                              // robot none jerking forward
+                                                              
 #endif
