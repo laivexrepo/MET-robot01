@@ -124,10 +124,6 @@ void opcontrol() {
 				left_wheel.move_absolute(degreesTravel, motorMaxSpeed);
 				right_wheel.move_absolute(degreesTravel, motorMaxSpeed);
 
-				// start with speed at 0 and then ramp it slowely up
-				left_wheel.move_velocity(0);
-				right_wheel.move_velocity(0);
-
 				if(DEBUG){
 					 std::cout << "\ndriveForDistance -- distance: " << deviationLength << " speed: " << motorMaxSpeed << "\n";
 					 std::cout << "Degrees to travel: " << degreesTravel << "\n";
@@ -137,6 +133,10 @@ void opcontrol() {
         int slice = 20;				// slew slicing  (max speed divided by slice is the rampup speed)
 				float speed = 0;			// current speed
 				float prevSpeed = 0;	// prevSpeed is starting at 0
+
+				// Set the brake mode for the motors to coasting
+				left_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+				right_wheel.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
 				// start with speed at 0 and then ramp it slowely up
 				left_wheel.move_velocity(speed);
